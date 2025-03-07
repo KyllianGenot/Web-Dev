@@ -1,57 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign up form</title>
-    <link rel="stylesheet" href="main.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign up form</title>
+  <link rel="stylesheet" href="src/main.css">
 </head>
 <body class="bg-nephritis fg-white">
-    <header>
-        <h1>
-            Welcome to the Binks
-        </h1>
-    </header>
-    <main>
-        <header>
-            <label for="signup-radio">Sign up</label>
-            <input type="radio" value="signup" name="formType" id="signup-radio" checked>
-            <label for="login-radio">Log in</label>
-            <input type="radio" value="login" name="formType" id="login-radio">
-        </header>
-        <form method="POST" id="signup">
-            <fieldset>
-                <legend>Please fill in the form</legend>
-                <div>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" id="username" required>
-                </div>
-                <div>
-                    <label for="email">Email</label>
-                    <input name="email" type="email" id="email" required>
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" id="password" required>
-                </div>
-                <button type="submit">Sign up</button>
-            </fieldset>
-        </form>
-        <form id="login" style="display: none;">
-            <fieldset>
-                <legend>Please fill in the form</legend>
-                <div>
-                    <label for="username">Username or email</label>
-                    <input name="username" type="text" id="username" required>
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" id="password" required>
-                </div>
-                <button type="submit">Log in</button>
-            </fieldset>
-        </form>
-    </main>
-    <script src="main.js" type="module"></script>
+  <div id="app"></div>
+  <script src="src/main.js" type="module"></script>
 </body>
 </html>
