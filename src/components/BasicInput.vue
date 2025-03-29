@@ -6,7 +6,7 @@ const props = defineProps<{
   type: string;
   label: string;
   modelValue: string;
-  showToggle?: boolean; // Optional prop to enable show/hide toggle for password
+  showToggle?: boolean;
 }>();
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
