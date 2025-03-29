@@ -25,6 +25,8 @@ const newTodoTitle = ref('');
 const newTodoDescription = ref('');
 const error = ref('');
 const formError = ref('');
+const selectedTodo = ref<Todo | null>(null); // Track the todo being edited
+const isModalOpen = ref(false); // Control modal visibility
 
 onMounted(async () => {
   const token = localStorage.getItem('token');
@@ -76,7 +78,7 @@ async function createTodo() {
   }
 }
 
-async function updateTodo(todo: Todo) {
+async function updateTodoStatus(todo: Todo) {
   const token = localStorage.getItem('token');
   if (!token) {
     router.push('/signin');
@@ -96,7 +98,35 @@ async function updateTodo(todo: Todo) {
     const index = todos.value.findIndex((t) => t._id === todo._id);
     todos.value[index] = updatedTodo as Todo;
   } catch (err) {
-    error.value = 'Failed to update todo: ' + (err as Error).message;
+    error.value = 'Failed to update todo status: ' + (err as Error).message;
+  }
+}
+
+async function updateTodoDetails() {
+  const todoToUpdate = selectedTodo.value;
+  if (!todoToUpdate) return;
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    router.push('/signin');
+    return;
+  }
+
+  try {
+    const updatedTodo = await putJSON(
+      `/api/todos/${todoToUpdate._id}`,
+      {
+        title: todoToUpdate.title,
+        description: todoToUpdate.description,
+        completed: todoToUpdate.completed,
+      },
+      token
+    );
+    const index = todos.value.findIndex((t) => t._id === todoToUpdate._id);
+    todos.value[index] = updatedTodo as Todo;
+    closeModal();
+  } catch (err) {
+    error.value = 'Failed to update todo details: ' + (err as Error).message;
   }
 }
 
@@ -113,6 +143,16 @@ async function deleteTodo(todoId: string) {
   } catch (err) {
     error.value = 'Failed to delete todo: ' + (err as Error).message;
   }
+}
+
+function openModal(todo: Todo) {
+  selectedTodo.value = { ...todo }; // Clone the todo to avoid direct mutation
+  isModalOpen.value = true;
+}
+
+function closeModal() {
+  selectedTodo.value = null;
+  isModalOpen.value = false;
 }
 
 function logout() {
@@ -170,13 +210,14 @@ function logout() {
         <li
           v-for="todo in todos"
           :key="todo._id"
-          class="flex items-center justify-between bg-white p-4 rounded-lg shadow"
+          class="flex items-center justify-between bg-white p-4 rounded-lg shadow cursor-pointer"
+          @click="openModal(todo)"
         >
           <div class="flex items-center space-x-3">
             <input
               type="checkbox"
               :checked="todo.completed"
-              @change="updateTodo(todo)"
+              @change="updateTodoStatus(todo)"
               class="h-5 w-5 text-blue-600"
             />
             <span
@@ -187,13 +228,53 @@ function logout() {
             </span>
           </div>
           <button
-            @click="deleteTodo(todo._id)"
+            @click.stop="deleteTodo(todo._id)"
             class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition-colors"
           >
             Delete
           </button>
         </li>
       </ul>
+    </div>
+  </div>
+
+  <!-- Modal for editing todo -->
+  <div v-if="isModalOpen" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+    <div v-if="selectedTodo" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Edit Todo</h3>
+      <form @submit.prevent="updateTodoDetails" class="space-y-4">
+        <div>
+          <BasicInput
+            id="edit-todo-title"
+            type="text"
+            label="Title"
+            v-model="selectedTodo.title"
+          />
+        </div>
+        <div>
+          <BasicInput
+            id="edit-todo-description"
+            type="text"
+            label="Description"
+            v-model="selectedTodo.description"
+          />
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            @click="closeModal"
+            class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Save
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
