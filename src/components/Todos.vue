@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-// ... other imports remain the same
 import TodoList from '../components/todos/TodoList.vue';
 import CreateTodo from '../components/todos/CreateTodo.vue';
 import EditTodoModal from '../components/todos/EditTodoModal.vue';
 import { Todo } from '../services/TodoService';
 import { Bars3Icon } from '@heroicons/vue/24/outline';
 
-// ... script logic remains the same
 const todoListRef = ref<{ todos: Todo[] } | null>(null);
 const selectedTodo = ref<Todo | null>(null);
 const isModalOpen = ref(false);
@@ -54,9 +52,7 @@ function closeSidebar() {
 </script>
 
 <template>
-  <!-- Cette div racine flex-1 prend toute la hauteur disponible du parent -->
   <div class="flex flex-1">
-    <!-- Desktop Sidebar -->
     <aside class="w-64 bg-white border-r border-gray-200 p-4 hidden md:block flex-shrink-0">
       <div class="h-full flex flex-col">
         <div class="mb-6 mt-2">
@@ -73,7 +69,6 @@ function closeSidebar() {
             </svg>
             <span>My Todos</span>
           </router-link>
-          <!-- Add other navigation links here if needed -->
         </nav>
         <div class="mt-auto text-xs text-gray-400 p-2">
             App Version 1.0.0
@@ -81,7 +76,6 @@ function closeSidebar() {
       </div>
     </aside>
 
-    <!-- Mobile Sidebar Overlay & Sidebar (position: fixed, height is handled differently) -->
     <div v-if="isSidebarOpen" @click="closeSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden transition-opacity duration-300 ease-in-out"></div>
     <transition
         enter-active-class="transition ease-in-out duration-300 transform"
@@ -92,7 +86,6 @@ function closeSidebar() {
         leave-to-class="-translate-x-full"
     >
         <aside v-if="isSidebarOpen" class="fixed top-0 left-0 bottom-0 w-64 bg-white border-r border-gray-200 p-4 flex flex-col z-50 md:hidden">
-            <!-- Mobile Sidebar Content... -->
             <div class="mb-6 mt-2">
               <h2 class="text-lg font-semibold text-gray-900">Navigation</h2>
             </div>
@@ -115,10 +108,8 @@ function closeSidebar() {
         </aside>
     </transition>
 
-    <!-- Main Content Area -->
     <main class="flex-1 p-6 overflow-y-auto">
       <div class="max-w-3xl mx-auto">
-        <!-- Mobile Menu Button -->
         <button
           class="md:hidden mb-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
           @click="toggleSidebar"
@@ -138,7 +129,6 @@ function closeSidebar() {
     </main>
   </div>
 
-  <!-- Edit Modal -->
   <EditTodoModal
       v-if="isModalOpen && selectedTodo"
       :todo="selectedTodo"

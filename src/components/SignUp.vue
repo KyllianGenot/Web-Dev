@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import BasicInput from '../components/BasicInput.vue'; // Ensure path is correct
-import { postJSON } from '../api-client/api-client'; // Ensure path is correct
+import BasicInput from '../components/BasicInput.vue';
+import { postJSON } from '../api-client/api-client';
 
 const router = useRouter();
 const username = ref('');
@@ -27,7 +27,6 @@ async function onSubmit() {
       password: password.value,
     });
     alert('Sign up successful! Please sign in.');
-    // Use replace if you don't want signup in history after successful signup
     router.replace('/signin');
   } catch (err: any) {
      if (err.status === 409 || err.message?.includes('duplicate')) {
@@ -43,10 +42,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <!-- **** MODIFIED LINE: Removed min-h-screen, added flex-1 **** -->
-  <!-- This div now grows within the RouterView space, and centers the form card within *that* space -->
   <div class="flex-1 flex items-center justify-center bg-background p-4">
-  <!-- **** END MODIFIED LINE **** -->
     <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-200">
       <h2 class="text-2xl font-semibold text-gray-900 mb-6 text-center">Create Account</h2>
       <div v-if="error" class="error-box mb-6">

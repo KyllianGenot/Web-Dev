@@ -2,10 +2,7 @@
 import { ref, defineEmits } from 'vue';
 import BasicInput from '../BasicInput.vue';
 import { createTodo, Todo } from '../../services/TodoService';
-// Use UnoCSS icon preset directly: i-{collection}-{icon-name}
-// Example: i-heroicons-plus-20-solid (check available icons/syntax)
-// Or keep using the component if preferred, UnoCSS preset should style it via `presetIcons` config
-import { PlusIcon } from '@heroicons/vue/20/solid'; // Using solid variant for filled look in button
+import { PlusIcon } from '@heroicons/vue/20/solid';
 
 const newTodoTitle = ref('');
 const newTodoDescription = ref('');
@@ -13,7 +10,6 @@ const formError = ref('');
 const emit = defineEmits(['created']);
 
 async function onSubmit() {
-  // Trim values before checking
   const title = newTodoTitle.value.trim();
   const description = newTodoDescription.value.trim();
 
@@ -25,20 +21,17 @@ async function onSubmit() {
     formError.value = 'Description is required.';
     return;
   }
-  formError.value = ''; // Clear error on successful validation
+  formError.value = '';
 
   const token = localStorage.getItem('token');
   if (!token) {
       formError.value = 'Authentication error. Please sign in again.';
-      // Optionally redirect to login
       return;
   }
 
   try {
-    // Pass trimmed values
     const newTodo: Todo = await createTodo(title, description, token);
     emit('created', newTodo);
-    // Clear fields after successful creation
     newTodoTitle.value = '';
     newTodoDescription.value = '';
   } catch (err) {
@@ -73,7 +66,6 @@ async function onSubmit() {
        </div>
     </div>
     <button type="submit" class="btn-primary w-full mt-5">
-      <!-- Ensure icon color is handled correctly by button text color -->
       <PlusIcon class="h-5 w-5 mr-2" aria-hidden="true" />
       <span>Add Todo</span>
     </button>

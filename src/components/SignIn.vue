@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import BasicInput from '../components/BasicInput.vue'; // Ensure path is correct
-import { postJSON } from '../api-client/api-client'; // Ensure path is correct
+import BasicInput from '../components/BasicInput.vue';
+import { postJSON } from '../api-client/api-client';
 
 const router = useRouter();
 const email = ref('');
@@ -17,7 +17,6 @@ async function onSubmit() {
     const response = await postJSON('/api/login', { email: email.value, password: password.value });
     if (response && response.token) {
         localStorage.setItem('token', response.token);
-        // Use replace to avoid login page in history
         router.replace('/todos');
     } else {
         error.value = 'Login failed. Please check your credentials.';
@@ -36,10 +35,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <!-- **** MODIFIED LINE: Removed min-h-screen, added flex-1 **** -->
-  <!-- This div now grows within the RouterView space, and centers the form card within *that* space -->
   <div class="flex-1 flex items-center justify-center bg-background p-4">
-  <!-- **** END MODIFIED LINE **** -->
     <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-200">
       <h2 class="text-2xl font-semibold text-gray-900 mb-6 text-center">Sign In</h2>
       <div v-if="error" class="error-box mb-6">

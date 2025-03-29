@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 import { updateTodo, deleteTodo, Todo } from '../../services/TodoService';
-// Use solid icons for actions if preferred, or outline
-import { PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline'; // Keeping outline for now
+import { PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps<{ todo: Todo }>();
 const emit = defineEmits(['edit', 'delete']);
@@ -11,26 +10,20 @@ async function toggleStatus() {
   const token = localStorage.getItem('token');
   if (!token) {
       console.error('Authentication token not found.');
-      // Optionally show user feedback
       return;
   }
   try {
-    // Optimistic update (can be reverted on error)
     const originalStatus = props.todo.completed;
     props.todo.completed = !props.todo.completed;
 
     await updateTodo(props.todo._id, { completed: props.todo.completed }, token);
-    // No need to update props.todo.completed again if API call succeeds
   } catch (err) {
     console.error('Failed to update todo status:', err);
-    // Revert optimistic update on error
-    props.todo.completed = !props.todo.completed; // Revert back
-    // Optionally show user feedback about the failure
+    props.todo.completed = !props.todo.completed;
   }
 }
 
 async function removeTodo() {
-  // Optional: Add confirmation dialog
   if (!confirm(`Are you sure you want to delete "${props.todo.title}"?`)) {
       return;
   }
@@ -38,15 +31,13 @@ async function removeTodo() {
   const token = localStorage.getItem('token');
    if (!token) {
       console.error('Authentication token not found.');
-      // Optionally show user feedback
       return;
   }
   try {
     await deleteTodo(props.todo._id, token);
-    emit('delete', props.todo._id); // Emit id for removal in parent list
+    emit('delete', props.todo._id);
   } catch (err) {
     console.error('Failed to delete todo:', err);
-     // Optionally show user feedback about the failure
   }
 }
 
@@ -82,7 +73,6 @@ function openEditModal() {
         </span>
       </label>
     </div>
-    <!-- Action Buttons - Use btn-icon shortcuts -->
     <div class="flex space-x-1 flex-shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
       <button @click="openEditModal" class="btn-icon-secondary" aria-label="Edit todo">
         <PencilSquareIcon class="h-5 w-5" />

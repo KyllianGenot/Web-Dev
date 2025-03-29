@@ -19,8 +19,6 @@ function handleEdit(todo: Todo) {
 }
 
 function handleDelete(todoId: string) {
-  // Find index before emitting might be useful if parent needs it,
-  // but parent already handles filtering by ID.
   emit('delete', todoId);
 }
 
@@ -41,23 +39,19 @@ onMounted(async () => {
   }
 });
 
-// Expose todos ref for parent component (TodosView) to modify
 defineExpose({ todos });
 </script>
 
 <template>
   <div>
-    <!-- Loading State -->
      <div v-if="isLoading" class="text-center text-gray-500 py-10">
        Loading todos...
     </div>
 
-    <!-- Error State -->
     <div v-else-if="error" class="error-box mb-6">
       {{ error }}
     </div>
 
-    <!-- Todos List -->
     <ul v-else-if="todos.length" class="space-y-3">
       <TodoItem
         v-for="todo in todos"
@@ -68,7 +62,6 @@ defineExpose({ todos });
       />
     </ul>
 
-    <!-- Empty State -->
     <div v-else class="text-center text-gray-500 py-10 px-6 bg-gray-50 rounded-lg border border-dashed border-gray-300">
       <p class="text-lg font-medium">No todos yet!</p>
       <p class="text-sm">Add your first task using the form above.</p>
