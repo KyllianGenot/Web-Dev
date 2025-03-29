@@ -22,7 +22,6 @@ async function onSubmit() {
       error.value = 'Login failed. Please check your credentials.';
     }
   } catch (err: any) {
-    // Improved error handling
     if (err.status === 401 || err.data?.message?.includes('Invalid email or password')) {
       error.value = 'Invalid email or password.';
     } else if (err.status === 400) {

@@ -22,12 +22,12 @@ export async function postJSON(url, data, token = null) {
     body: JSON.stringify(data),
   });
 
-  const responseData = await response.json(); // Parse the response body even on error
+  const responseData = await response.json();
 
   if (!response.ok) {
     const error = new Error(responseData.message || `HTTP error! Status: ${response.status}`);
-    error.status = response.status; // Attach the status code
-    error.data = responseData; // Attach the response body (e.g., { message: 'Invalid email or password' })
+    error.status = response.status;
+    error.data = responseData;
     throw error;
   }
 
@@ -50,7 +50,7 @@ export async function getJSON(url, token = null) {
     headers,
   });
 
-  const responseData = await response.json(); // Parse the response body even on error
+  const responseData = await response.json();
 
   if (!response.ok) {
     const error = new Error(responseData.message || `HTTP error! Status: ${response.status}`);
@@ -78,7 +78,7 @@ export async function putJSON(url, data, token) {
     body: JSON.stringify(data),
   });
 
-  const responseData = await response.json(); // Parse the response body even on error
+  const responseData = await response.json();
 
   if (!response.ok) {
     const error = new Error(responseData.message || `HTTP error! Status: ${response.status}`);
@@ -103,7 +103,7 @@ export async function deleteJSON(url, token) {
     },
   });
 
-  const responseData = await response.json(); // Parse the response body even on error
+  const responseData = await response.json();
 
   if (!response.ok) {
     const error = new Error(responseData.message || `HTTP error! Status: ${response.status}`);
