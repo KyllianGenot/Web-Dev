@@ -1,75 +1,99 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import BasicInput from './BasicInput.vue';
-import { postJSON } from '../api-client/api-client';
+import BasicInput from '../components/BasicInput.vue'; // Ensure path is correct
+import { postJSON } from '../api-client/api-client'; // Ensure path is correct
 
 const router = useRouter();
 const username = ref('');
 const email = ref('');
 const password = ref('');
 const error = ref('');
+const isLoading = ref(false);
 
 async function onSubmit() {
+   error.value = '';
+   isLoading.value = true;
+   if (!username.value.trim() || !email.value.trim() || !password.value) {
+       error.value = 'Please fill in all fields.';
+       isLoading.value = false;
+       return;
+   }
+
   try {
     await postJSON('/api/users', {
-      username: username.value,
-      email: email.value,
+      username: username.value.trim(),
+      email: email.value.trim(),
       password: password.value,
     });
-    router.push('/signin');
-  } catch (err) {
-    error.value = 'Failed to sign up. Please try again.';
+    alert('Sign up successful! Please sign in.');
+    // Use replace if you don't want signup in history after successful signup
+    router.replace('/signin');
+  } catch (err: any) {
+     if (err.status === 409 || err.message?.includes('duplicate')) {
+         error.value = 'Username or email already exists.';
+     } else {
+        error.value = 'Sign up failed. Please try again.';
+     }
+    console.error('Signup error:', err);
+  } finally {
+      isLoading.value = false;
   }
 }
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Sign Up</h2>
-      <div v-if="error" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+  <!-- **** MODIFIED LINE: Removed min-h-screen, added flex-1 **** -->
+  <!-- This div now grows within the RouterView space, and centers the form card within *that* space -->
+  <div class="flex-1 flex items-center justify-center bg-background p-4">
+  <!-- **** END MODIFIED LINE **** -->
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-200">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-6 text-center">Create Account</h2>
+      <div v-if="error" class="error-box mb-6">
         {{ error }}
       </div>
-      <form @submit.prevent="onSubmit" class="space-y-4">
-        <div>
-          <BasicInput
-            id="username"
-            type="text"
-            label="Username"
-            v-model="username"
-            autocomplete="username"
-          />
-        </div>
-        <div>
-          <BasicInput
-            id="email"
-            type="email"
-            label="Email"
-            v-model="email"
-            autocomplete="email"
-          />
-        </div>
-        <div>
-          <BasicInput
-            id="password"
-            type="password"
-            label="Password"
-            v-model="password"
-            autocomplete="new-password"
-            show-toggle
-          />
-        </div>
+      <form @submit.prevent="onSubmit" class="space-y-6">
+        <BasicInput
+          id="username"
+          type="text"
+          label="Username"
+          v-model="username"
+          autocomplete="username"
+          placeholder="Choose a username"
+          required
+        />
+        <BasicInput
+          id="email"
+          type="email"
+          label="Email"
+          v-model="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+          required
+        />
+        <BasicInput
+          id="password"
+          type="password"
+          label="Password"
+          v-model="password"
+          autocomplete="new-password"
+          placeholder="Create a password"
+          show-toggle
+          required
+        />
         <button
           type="submit"
-          class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
+          class="btn btn-primary w-full py-2.5"
+          :disabled="isLoading"
         >
-          Sign Up
+           {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
         </button>
       </form>
-      <p class="mt-4 text-center text-sm text-gray-600">
+      <p class="mt-6 text-center text-sm text-gray-600">
         Already have an account?
-        <router-link to="/signin" class="text-blue-600 hover:underline">Sign in</router-link>
+        <router-link to="/signin" class="font-medium text-primary hover:text-primary-dark hover:underline">
+            Sign in
+        </router-link>
       </p>
     </div>
   </div>
