@@ -16,20 +16,23 @@ async function onSubmit() {
   try {
     const response = await postJSON('/api/login', { email: email.value, password: password.value });
     if (response && response.token) {
-        localStorage.setItem('token', response.token);
-        router.replace('/todos');
+      localStorage.setItem('token', response.token);
+      router.replace('/todos');
     } else {
-        error.value = 'Login failed. Please check your credentials.';
+      error.value = 'Login failed. Please check your credentials.';
     }
   } catch (err: any) {
-    if (err.status === 401 || err.message?.includes('Unauthorized')) {
-        error.value = 'Invalid email or password.';
+    // Improved error handling
+    if (err.status === 401 || err.data?.message?.includes('Invalid email or password')) {
+      error.value = 'Invalid email or password.';
+    } else if (err.status === 400) {
+      error.value = 'Invalid request. Please check your input.';
     } else {
-        error.value = 'Login failed. Please try again later.';
+      error.value = 'Login failed due to a server error. Please try again later.';
     }
     console.error('Login error:', err);
   } finally {
-      isLoading.value = false;
+    isLoading.value = false;
   }
 }
 </script>
@@ -72,7 +75,7 @@ async function onSubmit() {
       <p class="mt-6 text-center text-sm text-gray-600">
         Don’t have an account?
         <router-link to="/signup" class="font-medium text-primary hover:text-primary-dark hover:underline">
-            Sign up
+          Sign up
         </router-link>
       </p>
     </div>
